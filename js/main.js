@@ -42,6 +42,7 @@ function authorized() {
     buttonOut.style.display = '';
     buttonOut.removeEventListener('click', logOut);
     checkAuth();
+    returnMain();
   }
 
   userName.textContent = login;
@@ -84,6 +85,12 @@ function checkAuth() {
   } else {
     notAuthorized();
   }
+}
+
+function returnMain() {
+  containerPromo.classList.remove('hide');
+  restaurants.classList.remove('hide');
+  menu.classList.add('hide');
 }
 
 function createCardRestaurant() {
@@ -160,11 +167,7 @@ close.addEventListener("click", toggleModal);
 
 cardsRestaurants.addEventListener('click', openGoods);
 
-logo.addEventListener('click', function () {
-  containerPromo.classList.remove('hide');
-  restaurants.classList.remove('hide');
-  menu.classList.add('hide');
-});
+logo.addEventListener('click', returnMain);
 
 checkAuth();
 
