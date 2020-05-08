@@ -27,6 +27,11 @@ function toggleModalAuth() {
   modalAuth.classList.toggle('is-open');
 }
 
+function validate(login) {
+  const regExp = /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/;
+  return regExp.test(login);
+}
+
 function authorized() {
 
   function logOut() {
@@ -52,16 +57,20 @@ function notAuthorized() {
 
   function logIn(event) {
     event.preventDefault();
-    login = loginInput.value;
-
-    localStorage.setItem('logMemo', login);
-
-    toggleModalAuth();
-    buttonAuth.removeEventListener('click', toggleModalAuth);
-    closeAuth.removeEventListener('click', toggleModalAuth);
-    logInForm.removeEventListener('submit', logIn);
-    logInForm.reset();
-    checkAuth();
+    if (validate(loginInput.value)) {
+      loginInput.style.borderBottomColor = '';
+      login = loginInput.value;
+      localStorage.setItem('logMemo', login);
+      toggleModalAuth();
+      buttonAuth.removeEventListener('click', toggleModalAuth);
+      closeAuth.removeEventListener('click', toggleModalAuth);
+      logInForm.removeEventListener('submit', logIn);
+      logInForm.reset();
+      checkAuth();
+    } else {
+      loginInput.style.borderBottomColor = '#FA8155';
+      loginInput.value = '';
+    }
   }
 
   buttonAuth.addEventListener('click', toggleModalAuth);
