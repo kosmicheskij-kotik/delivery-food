@@ -27,9 +27,9 @@ const cartButton = document.querySelector("#cart-button"),
 
 const cart = [];
 
-let login = localStorage.getItem('logMemo');
+let login = localStorage.getItem('login');
 
-const getData = async function (url) {
+const getData = async (url) => {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Error on ${url}, error status ${response.status}`);
@@ -54,7 +54,8 @@ function authorized() {
 
   function logOut() {
     login = null;
-    localStorage.removeItem('logMemo');
+    cart.length = 0;
+    localStorage.removeItem('login');
     buttonAuth.style.display = '';
     userName.style.display = '';
     buttonOut.style.display = '';
@@ -70,6 +71,7 @@ function authorized() {
   buttonOut.style.display = 'flex';
   cartButton.style.display = 'flex';
   buttonOut.addEventListener('click', logOut);
+  loadCart();
 }
 
 function notAuthorized() {
@@ -79,7 +81,7 @@ function notAuthorized() {
     if (validate(loginInput.value)) {
       loginInput.style.borderBottomColor = '';
       login = loginInput.value;
-      localStorage.setItem('logMemo', login);
+      localStorage.setItem('login', login);
       toggleModalAuth();
       buttonAuth.removeEventListener('click', toggleModalAuth);
       closeAuth.removeEventListener('click', toggleModalAuth);
@@ -190,6 +192,17 @@ function createCardGood({ description, image, name, price, id }) {
   cardsMenu.insertAdjacentElement('beforeend', card);
 }
 
+function loadCart() {
+  const localStorageCart = localStorage.getItem(login); 
+  if (localStorageCart){
+    cart.push(...JSON.parse(localStorageCart));
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(login, JSON.stringify(cart));
+}
+
 function searchGoods(event) {
   if (event.keyCode === 13) {
     const value = event.target.value.toLowerCase().trim();
@@ -250,6 +263,7 @@ function addToCart(event) {
       cart.push({ id, title, cost, count: 1 });
     }
   }
+  saveCart();
 }
 
 function renderCart() {
@@ -259,7 +273,7 @@ function renderCart() {
     const itemCart = `
       <div class="food-row">
         <span class="food-name">${title}</span>
-        <strong class="food-price">${cost} ₽</strong>
+        <strong class="food-price">${cost}</strong>
         <div class="food-counter">
           <button class="counter-button counter-minus" data-id=${id}>-</button>
           <span class="counter">${count}</span>
@@ -290,6 +304,7 @@ function changeCount(event) {
     if (event.target.classList.contains('counter-plus')) food.count++;
     renderCart();
   }
+  saveCart();
 }
 
 function clearCart() {
